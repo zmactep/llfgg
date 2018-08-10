@@ -2,8 +2,8 @@
 
 namespace props 
   constant and'  : Prop → Prop → Prop     -- все высказывания в Lean живут в специальной вселенной Prop
-                                        -- таким образом различными операциями над высказываниями являются
-                                        -- просто функции над Prop
+                                          -- таким образом различными операциями над высказываниями являются
+                                          -- просто функции над Prop
 
   constant or'   : Prop → Prop → Prop
   constant not'  : Prop → Prop
@@ -109,6 +109,17 @@ namespace theorems
                                           -- по сути сахар (have x : p, from e, t) превращается в
                                           -- (λ (x : p), t) e
 
+   example : ∀ {p q r : Prop},
+              (q → r) → (p → q) →
+              p → r :=
+    assume p q r : Prop,
+    assume hqr : q → r,
+    assume hpq : p → q,
+    assume hp  : p,                  
+    have q, from hpq hp,                  -- have может быть и анонимным (только тип, без терма)
+    show r, from hqr this                 -- чтоб использовать такой have можно применять слово this, оно обращается
+                                          -- к последнему have; в данном случае (this : q)
+
   example : ∀ {p q r : Prop},             -- возможна также конструкция suffices to show, строящая утверждение на том,
               (q → r) → (p → q) →         -- что достаточно доказать подцель, чтоб получить цель (на мой взгляд, не очень удобно)
               p → r :=                    -- синтаксические просто переписывается в (have x : p, from e, t)
@@ -166,7 +177,7 @@ namespace stdlib_and
     show q ∧ p, from ⟨hpq.right, hpq.left⟩-- еще немного сахара, and.left hpq можно заменить на hpq.left и т.д.
 
   example (hpq : p ∧ q) : q ∧ p :=        -- наиболее короткая, но, imho, малопонятная запись доказательства
-  ⟨hpq.right, hpq.left⟩                  -- каждый выбирает сам, но, кажется, в доказательстве теорем решает вербозность
+  ⟨hpq.right, hpq.left⟩                   -- каждый выбирает сам, но, кажется, в доказательстве теорем решает вербозность
 end stdlib_and
 
 -- or
